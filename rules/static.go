@@ -221,8 +221,8 @@ func (r *DefaultRuleRenderer) filterInputChain(ipVersion uint8) *Chain {
 			},
 			Rule{
 				Match:   Match().ProtocolNum(ProtoIPIP),
-				Action:  DropAction{},
-				Comment: []string{"Drop IPIP packets from non-Calico hosts"},
+				Action:  RejectAction{},
+				Comment: []string{"Reject IPIP packets from non-Calico hosts"},
 			},
 		)
 	}
@@ -243,8 +243,8 @@ func (r *DefaultRuleRenderer) filterInputChain(ipVersion uint8) *Chain {
 				Match: Match().ProtocolNum(ProtoUDP).
 					DestPorts(uint16(r.Config.VXLANPort)).
 					DestAddrType(AddrTypeLocal),
-				Action:  DropAction{},
-				Comment: []string{"Drop VXLAN packets from non-whitelisted hosts"},
+				Action:  RejectAction{},
+				Comment: []string{"Reject VXLAN packets from non-whitelisted hosts"},
 			},
 		)
 	}
@@ -1075,7 +1075,7 @@ func RPFilter(ipVersion uint8, mark, mask uint32, openStackSpecialCasesEnabled, 
 
 	rules = append(rules, Rule{
 		Match:  Match().MarkMatchesWithMask(mark, mask).RPFCheckFailed(acceptLocal),
-		Action: DropAction{},
+		Action: RejectAction{},
 	})
 
 	return rules
